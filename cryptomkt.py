@@ -25,12 +25,33 @@ def get_n_last_orders(ordertype, market, n):
 	return last_orders
 
 def get_orderbook(ordertype, market):
+	"""
+	returns bids or asks from the orderbook in json format
+	"""
 	payload = {'market': market, 'type': ordertype, 'page': 0}
-	return requests.get("https://api.cryptomkt.com/v1/book", params=payload).json()
+	r = requests.get("https://api.cryptomkt.com/v1/book", params=payload) 
+	if r.status_code == requests.codes.ok:
+		return r.json()
+	else:
+		return None	
 
 
 if __name__ == '__main__':  
   
-  # just a test...
-  # print(get_last_order('buy', 'ETHEUR'))
-  print(get_n_last_orders('buy', 'ETHEUR', 5))
+	ordertype = 'buy'
+	market = 'ETHEUR'
+
+	if get_orderbook(ordertype, market) is None:
+		print("Bad response. Exiting...")
+		exit()
+
+	last_order = get_last_order(ordertype, market)
+	if not isinstance(last_order, dict) or (len(last_order) != 2):
+		print('Error. Function get_last_order should return a dictionary with two elements.')
+		exit()
+
+	n_last_orders = get_n_last_orders(ordertype, market, 5)
+	if not isinstance(n_last_orders, list) or (len(n_last_orders) == 0):
+		print('Error. Function get_n_last_orders should return a list. API not responding?')
+		exit()
+
