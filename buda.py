@@ -1,5 +1,5 @@
 """ buda exchange module.
-	Current supported markets are:
+	buda currently supports the following markets:
 		btc-clp
 		btc-cop
 		eth-clp

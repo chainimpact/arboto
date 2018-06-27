@@ -1,3 +1,21 @@
+""" bitstamp exchange module.
+	Bitstamp currently supports the following markets:
+		LTC/USD
+		ETH/USD
+		XRP/EUR
+		BCH/USD
+		BCH/EUR
+		BTC/EUR
+		XRP/BTC
+		EUR/USD
+		BCH/BTC
+		LTC/EUR
+		BTC/USD
+		LTC/BTC
+		XRP/USD
+		ETH/BTC
+		ETH/EUR
+"""
 import requests
 
 def get_last_order(ordertype, market):
@@ -32,6 +50,18 @@ def get_orderbook(market):
 		return r.json()
 	else:
 		return None	
+
+def print_markets():
+	"""
+	Lists all available markets.
+	"""	
+	r = requests.get("https://www.bitstamp.net/api/v2/trading-pairs-info/") 
+	if r.status_code == requests.codes.ok:
+		for mkt in r.json():
+			print(mkt['name'])
+	else:
+		print('Error')
+
 
 if __name__ == '__main__':
 

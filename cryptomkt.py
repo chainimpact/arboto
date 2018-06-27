@@ -1,5 +1,5 @@
 """ cryptomkt exchange module.
-	Supported markets:
+	cryptomkt currently supports the following markets:
 		ETHCLP
 		ETHARS
 		ETHEUR
