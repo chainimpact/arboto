@@ -18,7 +18,7 @@ def get_n_last_orders(ordertype, market, n):
     """						
 	r = get_orderbook(market)	
 	last_orders = []	
-	for elem in r[ordertype][0:n-1]:
+	for elem in r[ordertype][0:n]:
 		last_orders.append({'price': elem[0], 'amount': elem[1]})	
 	return last_orders
 
@@ -35,7 +35,7 @@ def get_orderbook(market):
 
 if __name__ == '__main__':
 
-	market = 'ETHEUR'
+	market = 'etheur'
 	ordertype = 'asks'
 
 	if get_orderbook(market) is None:

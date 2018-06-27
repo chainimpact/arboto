@@ -1,3 +1,18 @@
+""" cryptomkt exchange module.
+	Supported markets:
+		ETHCLP
+		ETHARS
+		ETHEUR
+		ETHBRL
+		XLMCLP
+		XLMARS
+		XLMEUR
+		XLMBRL
+		BTCCLP
+		BTCARS
+		BTCEUR
+		BTCBRL
+"""
 import requests
 
 def get_last_order(ordertype, market):
@@ -34,6 +49,18 @@ def get_orderbook(ordertype, market):
 		return r.json()
 	else:
 		return None	
+
+def print_markets():
+	"""
+	Lists all available markets.
+	"""	
+	r = requests.get("https://api.cryptomkt.com/v1/market")
+	if r.status_code == requests.codes.ok:
+		for mkt in r.json()['data']:
+			print(mkt)
+	else:
+		print('Error')
+
 
 
 if __name__ == '__main__':  

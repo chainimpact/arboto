@@ -1,3 +1,25 @@
+""" buda exchange module.
+	Current supported markets are:
+		btc-clp
+		btc-cop
+		eth-clp
+		eth-btc
+		btc-pen
+		eth-pen
+		eth-cop
+		bch-btc
+		bch-clp
+		bch-cop
+		bch-pen
+		btc-ars
+		eth-ars
+		bch-ars
+		ltc-btc
+		ltc-clp
+		ltc-cop
+		ltc-pen
+		ltc-ars	
+"""
 import requests
 
 def get_last_order(ordertype, market):
@@ -33,9 +55,21 @@ def get_orderbook(market):
 	else:
 		return None
 
+def print_markets():
+	"""
+	Lists all available markets.
+	"""
+	url = 'https://www.buda.com/api/v2/markets.json'
+	r = requests.get(url)
+	if r.status_code == requests.codes.ok:
+		for mkt in r.json()['markets']:
+			print(mkt['name'])
+	else:
+		print('Error')
+
 if __name__ == '__main__':  
   	
-	market = 'ETHEUR'
+	market = 'ETH-BTC'
 	ordertype = 'asks'
 	
 	if get_orderbook(market) is None:
