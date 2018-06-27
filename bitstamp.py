@@ -51,17 +51,16 @@ def get_orderbook(market):
 	else:
 		return None	
 
-def print_markets():
+def get_markets():
 	"""
-	Lists all available markets.
-	"""	
-	r = requests.get("https://www.bitstamp.net/api/v2/trading-pairs-info/") 
+	Returns a list of all available markets in this exchange in the format ['ETHCLP', ...]
+	"""
+	markets = []
+	r = requests.get("https://www.bitstamp.net/api/v2/trading-pairs-info/") 	
 	if r.status_code == requests.codes.ok:
 		for mkt in r.json():
-			print(mkt['name'])
-	else:
-		print('Error')
-
+			markets.append(mkt['name'].replace('/','').upper())
+	return markets
 
 if __name__ == '__main__':
 
@@ -70,6 +69,10 @@ if __name__ == '__main__':
 
 	if get_orderbook(market) is None:
 		print("Bad response. Exiting...")
+		exit()
+
+	if len(get_markets()) == 0:
+		print("Error. get_markets returns an empty list")
 		exit()
 
 	last_order = get_last_order(ordertype, market)

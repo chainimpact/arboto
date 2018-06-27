@@ -50,18 +50,16 @@ def get_orderbook(ordertype, market):
 	else:
 		return None	
 
-def print_markets():
+def get_markets():
 	"""
-	Lists all available markets.
+	returns a list of all available markets in this exchange in the format ['ETHCLP', ...]
 	"""	
-	r = requests.get("https://api.cryptomkt.com/v1/market")
+	markets = []
+	r = requests.get("https://api.cryptomkt.com/v1/market")	
 	if r.status_code == requests.codes.ok:
 		for mkt in r.json()['data']:
-			print(mkt)
-	else:
-		print('Error')
-
-
+			markets.append(mkt.upper())
+	return markets			
 
 if __name__ == '__main__':  
   
@@ -70,6 +68,10 @@ if __name__ == '__main__':
 
 	if get_orderbook(ordertype, market) is None:
 		print("Bad response. Exiting...")
+		exit()
+
+	if len(get_markets()) == 0:
+		print("Error. get_markets returns an empty list")
 		exit()
 
 	last_order = get_last_order(ordertype, market)

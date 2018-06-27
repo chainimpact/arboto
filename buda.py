@@ -55,17 +55,17 @@ def get_orderbook(market):
 	else:
 		return None
 
-def print_markets():
+def get_markets():
 	"""
-	Lists all available markets.
+	Returns a list of all available markets in this exchange in the format ['ETHCLP', ...]
 	"""
+	markets = []
 	url = 'https://www.buda.com/api/v2/markets.json'
 	r = requests.get(url)
 	if r.status_code == requests.codes.ok:
 		for mkt in r.json()['markets']:
-			print(mkt['name'])
-	else:
-		print('Error')
+			markets.append(mkt['name'].replace('-','').upper())
+	return markets
 
 if __name__ == '__main__':  
   	
@@ -75,6 +75,10 @@ if __name__ == '__main__':
 	if get_orderbook(market) is None:
 		print("Bad response. Exiting...")
 		exit()
+
+	if len(get_markets()) == 0:
+		print("Error. get_markets returns an empty list")
+		exit()		
 
 	last_order = get_last_order(ordertype, market)
 	if not isinstance(last_order, dict) or (len(last_order) != 2):
