@@ -24,26 +24,31 @@ def get_last_order(ordertype, market):
     :param market: <str> e.g. 'etheur'
     :return: <dict> e.g. {'amount': '0.067', 'price': '400.1'}
     """	
-	r = get_orderbook(market)		
-	last_order = {'price': r[ordertype][0][0], 'amount': r[ordertype][0][1]}
+	r = get_orderbook(market)
+	last_order = {}
+	if r is not None:
+		last_order = {'price': r[ordertype][0][0], 'amount': r[ordertype][0][1]}
 	return last_order
 
 def get_n_last_orders(ordertype, market, n):
 	"""
     :param ordertype: <str> 'bids' or 'asks'    
-    :param market: <str> e.g. 'etheur'
+    :param market: <str> e.g. 'etheur' or 'eth-eur'
     :return: <list> e.g. [{'amount': '0.067', 'price': '400.1'},...]
     """						
 	r = get_orderbook(market)	
 	last_orders = []	
-	for elem in r[ordertype][0:n]:
-		last_orders.append({'price': elem[0], 'amount': elem[1]})	
+	if r is not None:
+		for elem in r[ordertype][0:n]:
+			last_orders.append({'price': elem[0], 'amount': elem[1]})	
 	return last_orders
 
 def get_orderbook(market):
 	"""
 	returns the orderbook in json format. Includes both bids and asks.
+	:param market: <str> e.g. 'etheur' or 'eth-eur'
 	"""
+	market = market.replace('-','')
 	url = 'https://www.bitstamp.net/api/v2/order_book/' + market
 	r = requests.get(url)	
 	if r.status_code == requests.codes.ok:

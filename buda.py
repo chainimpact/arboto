@@ -21,6 +21,7 @@
 		ltc-ars	
 """
 import requests
+import re
 
 def get_last_order(ordertype, market):
 	"""
@@ -29,25 +30,32 @@ def get_last_order(ordertype, market):
     :return: <dict> e.g. {'amount': '0.067', 'price': '400.1'}
     """			
 	r = get_orderbook(market)
-	last_order = {'price': r['order_book'][ordertype][0][0], 'amount': r['order_book'][ordertype][0][1]}
+	last_order = {}
+	if r is not None:
+		last_order = {'price': r['order_book'][ordertype][0][0], 'amount': r['order_book'][ordertype][0][1]}
 	return last_order
 
 def get_n_last_orders(ordertype, market, n):
 	"""
     :param ordertype: <str> 'bids' or 'asks'    
-    :param market: <str> e.g. 'ETH-CLP'
+    :param market: <str> e.g. 'etheur' or 'eth-eur'
     :return: <list> e.g. [{'amount': '0.067', 'price': '400.1'},...]
     """					
 	r = get_orderbook(market)
 	last_orders = []
-	for elem in r['order_book'][ordertype][0:n]:
-		last_orders.append({'price': elem[0], 'amount': elem[1]})	
+	if r is not None:
+		for elem in r['order_book'][ordertype][0:n]:
+			last_orders.append({'price': elem[0], 'amount': elem[1]})	
 	return last_orders
 
 def get_orderbook(market):
 	"""
 	returns the orderbook in json format. Includes both bids and asks.
+	:param market: <str> e.g. 'etheur' or 'eth-eur'
+	:return: <json> the orderbook 
 	"""
+	if re.match('\w{6}\Z', market):
+		market = market[0:3] + '-' + market[3:]		# arrange data to match AAA-BBB format	
 	url = 'https://www.buda.com/api/v2/markets/' + market + '/order_book.json'
 	r = requests.get(url)
 	if r.status_code == requests.codes.ok:
@@ -69,7 +77,7 @@ def get_markets():
 
 if __name__ == '__main__':  
   	
-	market = 'ETH-BTC'
+	market = 'ETHBTC'
 	ordertype = 'asks'
 	
 	if get_orderbook(market) is None:

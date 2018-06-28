@@ -18,31 +18,35 @@ import requests
 def get_last_order(ordertype, market):
 	"""
     :param ordertype: <str> 'buy' or 'sell'    
-    :param market: <str> e.g. 'ETHEUR'
+    :param market: <str> e.g. 'etheur' or 'eth-eur'
     :return: <dict> e.g. {'amount': '0.067', 'price': '400.1'}
     """			
 	r = get_orderbook(ordertype, market)
-	last_order = {'price': r['data'][0]['price'], 'amount': r['data'][0]['amount']}
+	last_order = {}
+	if r is not None:
+		last_order = {'price': r['data'][0]['price'], 'amount': r['data'][0]['amount']}
 	return last_order
 
 def get_n_last_orders(ordertype, market, n):
 	"""
-    :param ordertype: <str> 'buy' or 'sell'    
-    :param market: <str> e.g. 'ETHEUR'
+    :param ordertype: <str> 'buy' or 'sell'
+    :param market: <str> e.g. 'etheur' or 'eth-eur'
     :return: <list> e.g. [{'amount': '0.067', 'price': '400.1'},...]
     """		
 	r = get_orderbook(ordertype, market)
 	last_orders = []
-	# last_n_elements = 
-	for elem in r['data'][0:n]:
-		last_orders.append({'price': elem['price'], 'amount': elem['amount']})
-	
+	if r is not None: 
+		for elem in r['data'][0:n]:
+			last_orders.append({'price': elem['price'], 'amount': elem['amount']})	
 	return last_orders
 
 def get_orderbook(ordertype, market):
 	"""
 	returns bids or asks from the orderbook in json format
+	:param ordertype: <str> 'buy' or 'sell'
+	:param market: <str> e.g. 'etheur' or 'eth-eur'
 	"""
+	market = market.replace('-','')
 	payload = {'market': market, 'type': ordertype, 'page': 0}
 	r = requests.get("https://api.cryptomkt.com/v1/book", params=payload) 
 	if r.status_code == requests.codes.ok:
@@ -62,7 +66,9 @@ def get_markets():
 	return markets			
 
 if __name__ == '__main__':  
-  
+
+	# run some simple unitary tests
+
 	ordertype = 'buy'
 	market = 'ETHEUR'
 
