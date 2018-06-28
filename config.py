@@ -1,3 +1,5 @@
+import os
+
 DEBUG_MODE_ON = True
 
 DEPTH = 5
@@ -11,7 +13,8 @@ MARKETS = (
 	'BCHBTC'
 )
 
-DATA_DIR = './data/'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR,'data/')
 
 COLORS = {
  	0: '\033[0m',  # end color
