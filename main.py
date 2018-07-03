@@ -1,6 +1,6 @@
 from datetime import datetime
 import threading
-import cryptomkt, buda, bitstamp
+import cryptomkt, buda, bitstamp, kraken
 from config import *
 
 def record_orders(timestamp, data, file_name):	
@@ -100,6 +100,31 @@ if __name__ == '__main__':
 				say('Warning: No data received (BITSTAMP_' + mkt + '_ASKS)', 1)
 				say("Writing NULL data to file " + file_name)
 				record_orders(timestamp, dummy_data(), file_name)
+
+		# 4. fetch data from kraken
+		if mkt in kraken.get_markets():
+			# get kraken bids
+			data = kraken.get_n_last_orders('bids', mkt, DEPTH)
+			file_name = DATA_DIR + 'KRAKEN_' + mkt + '_BIDS'
+			if len(data) != 0:
+				say("Writing data to file " + file_name)		
+				record_orders(timestamp, data, file_name)
+			else:
+				say('Warning: No data received (KRAKEN_' + mkt + '_BIDS)', 1)
+				say("Writing NULL data to file " + file_name)
+				record_orders(timestamp, dummy_data(), file_name)
+
+			# get kraken asks
+			data = kraken.get_n_last_orders('asks', mkt, DEPTH)
+			file_name = DATA_DIR + 'KRAKEN_' + mkt + '_ASKS'
+			if len(data) != 0:
+				say("Writing data to file " + file_name)		
+				record_orders(timestamp, data, file_name)
+			else:
+				say('Warning: No data received (KRAKEN_' + mkt + '_ASKS)', 1)
+				say("Writing NULL data to file " + file_name)
+				record_orders(timestamp, dummy_data(), file_name)
+
 
 
 
