@@ -1,5 +1,5 @@
-""" cryptomkt exchange module.
-	cryptomkt currently supports the following markets:
+""" Cryptomkt API client implementation.
+	Cryptomkt currently supports the following markets:
 		ETHCLP
 		ETHARS
 		ETHEUR
@@ -14,78 +14,71 @@
 		BTCBRL
 """
 import requests
+from exchange_client_interface import *
 
-def get_last_order(ordertype, market):
-	"""
-    :param ordertype: <str> 'buy' or 'sell'    
-    :param market: <str> e.g. 'etheur' or 'eth-eur'
-    :return: <dict> e.g. {'amount': '0.067', 'price': '400.1'}
-    """			
-	r = get_orderbook(ordertype, market)
-	last_order = {}
-	if r is not None:
-		last_order = {'price': r['data'][0]['price'], 'amount': r['data'][0]['amount']}
-	return last_order
+class Cryptomkt(ExchangeClientInterface):
 
-def get_n_last_orders(ordertype, market, n):
-	"""
-    :param ordertype: <str> 'buy' or 'sell'
-    :param market: <str> e.g. 'etheur' or 'eth-eur'
-    :return: <list> e.g. [{'amount': '0.067', 'price': '400.1'},...]
-    """		
-	r = get_orderbook(ordertype, market)
-	last_orders = []
-	if r is not None: 
-		for elem in r['data'][0:n]:
-			last_orders.append({'price': elem['price'], 'amount': elem['amount']})	
-	return last_orders
+	order_dict = {'bids': 'buy', 'asks': 'sell'}
 
-def get_orderbook(ordertype, market):
-	"""
-	returns bids or asks from the orderbook in json format
-	:param ordertype: <str> 'buy' or 'sell'
-	:param market: <str> e.g. 'etheur' or 'eth-eur'
-	"""
-	market = market.replace('-','')
-	payload = {'market': market, 'type': ordertype, 'page': 0}
-	r = requests.get("https://api.cryptomkt.com/v1/book", params=payload) 
-	if r.status_code == requests.codes.ok:
-		return r.json()
-	else:
-		return None	
+	@staticmethod
+	def get_n_last_orders(ordertype, market, n):
+		"""
+	    :param ordertype: <str> 'bids' or 'asks'
+	    :param market: <str> e.g. 'etheur' or 'eth-eur'
+	    :return: <list> e.g. [{'amount': '0.067', 'price': '400.1'},...]
+	    """		
+		r = Cryptomkt.get_orderbook(ordertype, market)
+		last_orders = []
+		if r is not None: 
+			for elem in r['data'][0:n]:
+				last_orders.append({'price': elem['price'], 'amount': elem['amount']})	
+		return last_orders
 
-def get_markets():
-	"""
-	returns a list of all available markets in this exchange in the format ['ETHCLP', ...]
-	"""	
-	markets = []
-	r = requests.get("https://api.cryptomkt.com/v1/market")	
-	if r.status_code == requests.codes.ok:
-		for mkt in r.json()['data']:
-			markets.append(mkt.upper())
-	return markets			
+	@staticmethod
+	def get_orderbook(ordertype, market):
+		"""
+		returns bids or asks from the orderbook in json format
+		:param ordertype: <str> 'buy' or 'sell'
+		:param market: <str> e.g. 'etheur' or 'eth-eur'
+		"""
+		market = market.replace('-','')
+		order = Cryptomkt.order_dict[ordertype]
+		payload = {'market': market, 'type': order, 'page': 0}
+		r = requests.get("https://api.cryptomkt.com/v1/book", params=payload) 
+		if r.status_code == requests.codes.ok:
+			return r.json()
+		else:
+			return None	
+
+	@staticmethod
+	def get_markets():
+		"""
+		returns a list of all available markets in this exchange in the format ['ETHCLP', ...]
+		:return: <list>
+		"""	
+		markets = []
+		r = requests.get("https://api.cryptomkt.com/v1/market")	
+		if r.status_code == requests.codes.ok:
+			for mkt in r.json()['data']:
+				markets.append(mkt.upper())
+		return markets			
 
 if __name__ == '__main__':  
 
 	# run some simple unitary tests
 
-	ordertype = 'buy'
+	ordertype = 'bids'
 	market = 'ETHEUR'
 
-	if get_orderbook(ordertype, market) is None:
+	if Cryptomkt.get_orderbook(ordertype, market) is None:
 		print("Bad response. Exiting...")
 		exit()
 
-	if len(get_markets()) == 0:
+	if len(Cryptomkt.get_markets()) == 0:
 		print("Error. get_markets returns an empty list")
 		exit()
 
-	last_order = get_last_order(ordertype, market)
-	if not isinstance(last_order, dict) or (len(last_order) != 2):
-		print('Error. Function get_last_order should return a dictionary with two elements.')
-		exit()
-
-	n_last_orders = get_n_last_orders(ordertype, market, 5)
+	n_last_orders = Cryptomkt.get_n_last_orders(ordertype, market, 5)
 	if not isinstance(n_last_orders, list) or (len(n_last_orders) == 0):
 		print('Error. Function get_n_last_orders should return a list. API not responding?')
 		exit()

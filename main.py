@@ -23,107 +23,37 @@ def say(msg, level=0):
 if __name__ == '__main__':	
 	
 	timestamp = str(datetime.now())	
-	say('Starting pyArboto at ' + timestamp)
-	say('Fetching markets: ' + str(MARKETS))
+	say('Starting pyArboto market data monitor at ' + timestamp)
+	say('Fetching pairs: ' + str(MARKETS))
+	say('From: ')
+	for exch in EXCHANGES:
+		say('\t' + exch)
 	say('Depth: ' + str(DEPTH))
 
-	for mkt in MARKETS:
+	order_types = ['bids', 'asks']
 
-		# 1. fetch data from cryptomkt
-		if mkt in cryptomkt.get_markets():
-			# get crytomkt bids
-			data = cryptomkt.get_n_last_orders('buy', mkt, DEPTH)
-			file_name = DATA_DIR + 'CRYPTOMKT_' + mkt + '_BIDS'
-			if len(data) != 0:				
-				say("Writing data to file " + file_name)
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (CRYPTOMKT_' + mkt + '_BIDS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
- 
-			# get crytomkt asks
-			data = cryptomkt.get_n_last_orders('sell', mkt, DEPTH)
-			file_name = DATA_DIR + 'CRYPTOMKT_' + mkt + '_ASKS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (CRYPTOMKT_' + mkt + '_ASKS', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
+for mkt in MARKETS:
+	for key in EXCHANGES:
 
-		# 2. fetch data from buda
-		if mkt in buda.get_markets():
-			# get buda bids
-			data = buda.get_n_last_orders('bids', mkt, DEPTH)
-			file_name = DATA_DIR + 'BUDA_' + mkt + '_BIDS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (BUDA_' + mkt + '_BIDS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
+		client = EXCHANGES[key]
+		exchange_name = key.upper()
+		
+		if mkt in client.get_markets():
 
-			# get buda asks
-			data = buda.get_n_last_orders('asks', mkt, DEPTH)
-			file_name = DATA_DIR + 'BUDA_' + mkt + '_ASKS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (BUDA_' + mkt + '_ASKS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
+			for order_type in order_types:
+			
+				data = client.get_n_last_orders(order_type, mkt, DEPTH)			
+				file_name = DATA_DIR + exchange_name + '_' + mkt + '_' + order_type.upper()
 
-		# 3. fetch data from bitstamp
-		if mkt in bitstamp.get_markets():
-			# get bitstamp bids
-			data = bitstamp.get_n_last_orders('bids', mkt, DEPTH)
-			file_name = DATA_DIR + 'BITSTAMP_' + mkt + '_BIDS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (BITSTAMP_' + mkt + '_BIDS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
+				if data:					
+					say("Writing data to file " + file_name)
+					record_orders(timestamp, data, file_name)
+				else:
+					say('Warning: No data received (' + exchange_name + '_' + mkt + '_' + order_type.upper() + ')', 1) 					
+					say("Writing NULL data to file " + file_name)
+					record_orders(timestamp, dummy_data(), file_name)
 
-			# get bitstamp asks
-			data = bitstamp.get_n_last_orders('asks', mkt, DEPTH)
-			file_name = DATA_DIR + 'BITSTAMP_' + mkt + '_ASKS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (BITSTAMP_' + mkt + '_ASKS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
 
-		# 4. fetch data from kraken
-		if mkt in kraken.get_markets():
-			# get kraken bids
-			data = kraken.get_n_last_orders('bids', mkt, DEPTH)
-			file_name = DATA_DIR + 'KRAKEN_' + mkt + '_BIDS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (KRAKEN_' + mkt + '_BIDS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
-
-			# get kraken asks
-			data = kraken.get_n_last_orders('asks', mkt, DEPTH)
-			file_name = DATA_DIR + 'KRAKEN_' + mkt + '_ASKS'
-			if len(data) != 0:
-				say("Writing data to file " + file_name)		
-				record_orders(timestamp, data, file_name)
-			else:
-				say('Warning: No data received (KRAKEN_' + mkt + '_ASKS)', 1)
-				say("Writing NULL data to file " + file_name)
-				record_orders(timestamp, dummy_data(), file_name)
 
 
 
