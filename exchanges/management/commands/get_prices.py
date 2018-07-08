@@ -1,18 +1,10 @@
-from django.core.management.base import BaseCommand, CommandError
-from arboto.settings import DEBUG
 import os
+from django.core.management.base import BaseCommand, CommandError
+from django.utils.dateparse import parse_datetime
 
+from arboto.settings import DEBUG
 from exchanges.models import Ask, Bid, ApiRequest, Exchange
 
-from django.utils.dateparse import parse_datetime
-from django.core.management.base import BaseCommand
-
-# not useful anymore because we don't have to execute outside files anymore.
-# if DEBUG:
-#     ENV_PATH = '/home/felipe/.virtualenvs/arboto'
-# else:
-#     # TODO
-#     ENV_PATH = ''
 
 PRICE_TYPES = (
     ('a', 'ask'),
@@ -26,8 +18,17 @@ EXCHANGES = [
 	'cryptomkt'
     ]
 
+PAIRS = (
+	('ETHEUR', 'ETHER-EURO'),
+	('ETHBTC', 'ETHER-BITCOIN'),
+	('ETHCLP', 'ETHER-PESOS'),
+	('BTCCLP', 'BITCOIN-PESOS'),
+	('LTCBTC', 'LITECOIN-BITCOIN'),
+	('BCHBTC', 'BITCOINCASH-BITCOIN')
+)
+
 class Command(BaseCommand):
-    help = 'getting prices from pyarboto data files'
+    help = 'importing prices from pyarboto data files'
 
     def handle(self, *args, **options):
         for data_file in os.listdir('/home/felipe/code/chainimpact/pyarboto/pyarboto/data'):
@@ -39,15 +40,16 @@ class Command(BaseCommand):
                 pair = self.get_pair(data_file)
 
                 data = f.readlines()
+
+                # check if already imported
                 if len(data) > 1:
                     penultimate_line = data[-2]
 
-                    # check if already imported
                     # if self.check_date_previous_import(penultimate_line):
 
                 last_line = data[-1]
                 print(last_line, exchange, price_type)
-                self.import_data(last_line, exchange, price_type)
+                self.import_data(last_line, exchange, price_type, pair)
 
     def get_exchange(self, data_file):
         exchanges = EXCHANGES
@@ -62,7 +64,7 @@ class Command(BaseCommand):
         return 'b'
 
     def get_pair(self, data_file):
-        # pass
+        return data_file[-11:-5]
 
     def check_date_previous_import(self, penultimate_line):
         date_sting = penultimate_line[:16]
@@ -74,23 +76,29 @@ class Command(BaseCommand):
             # TODO: re-import data from previous date
             pass
 
-    def import_data(self, last_line, exchange, price_type):
+    def import_data(self, last_line, exchange, price_type, pair):
         date_sting = last_line[:16]
         date = parse_datetime(date_sting)
 
         data_points = last_line.split()
-        for point in data_points[2:]:
+
+        for price, volume in zip(data_points[2::2], data_points[3::2]):
+        # for point in data_points[2::2]:
             if price_type == 'a':
                 new_data_point = Ask(
                     timestamp = date,
-                    value = point,
-                    exchange = exchange
+                    exchange = exchange,
+                    pair = pair,
+                    value = price,
+                    volume = volume
                 )
-                print(new_data_point)
+                new_data_point.save()
             else:
                 new_data_point = Bid(
                     timestamp = date,
-                    value = point,
-                    exchange = exchange
+                    exchange = exchange,
+                    pair = pair,
+                    value = price,
+                    volume = volume
                 )
-                print(new_data_point)
+                new_data_point.save()
