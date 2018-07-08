@@ -8,12 +8,12 @@ PRICE_TYPES = (
     )
 
 PAIRS = (
-	(1, 'ETHEUR'),
-	(2, 'ETHBTC'),
-	(3, 'ETHCLP'),
-	(4, 'BTCCLP'),
-	(5, 'LTCBTC'),
-	(6, 'BCHBTC')
+	('ETHEUR', 'ETHER-EURO'),
+	('ETHBTC', 'ETHER-BITCOIN'),
+	('ETHCLP', 'ETHER-PESOS'),
+	('BTCCLP', 'BITCOIN-PESOS'),
+	('LTCBTC', 'LITECOIN-BITCOIN'),
+	('BCHBTC', 'BITCOINCASH-BITCOIN')
 )
 
 class Exchange(models.Model):
@@ -52,8 +52,9 @@ class Price(models.Model):
     value = models.DecimalField(max_digits=16, decimal_places=10)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     # api_request FK is also a legacy artifact to be deleted later on
-    api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE)
+    api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE, blank=True, null=True)
     pair = models.CharField(choices=PAIRS, default='ETHEUR', max_length=6)
+    volume = models.DecimalField(max_digits=12, decimal_places=4)
 
     class Meta:
         abstract = True
@@ -63,11 +64,25 @@ class Ask(Price):
     price_type = models.CharField(choices=PRICE_TYPES, default='a', max_length=1)
 
     def __str__(self):
-        return "{}-{}-{}-{}".format(self.exchange, self.timestamp, self.price_type, self.value)
+        return "{}-{}-{}-{}-{}-{}".format(
+            self.exchange,
+            self.timestamp,
+            self.price_type.upper(),
+            self.pair,
+            self.value,
+            self.volume
+            )
 
 
 class Bid(Price):
     price_type = models.CharField(choices=PRICE_TYPES, default='b', max_length=1)
 
     def __str__(self):
-        return "{}-{}-{}-{}".format(self.exchange, self.pair, self.timestamp, self.value)
+        return "{}-{}-{}-{}-{}-{}".format(
+            self.timestamp,
+            self.exchange,
+            self.price_type.upper(),
+            self.pair,
+            self.value,
+            self.volume
+            )
