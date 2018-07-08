@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'exchanges.apps.ExchangesConfig',
+    'exchanges.apps.ExchangesConfig',
 ]
 
 MIDDLEWARE = [
