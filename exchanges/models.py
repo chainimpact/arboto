@@ -1,6 +1,5 @@
 from django.db import models
 
-from pyarboto import config
 
 
 PRICE_TYPES = (
@@ -8,6 +7,14 @@ PRICE_TYPES = (
     ('b', 'bid')
     )
 
+PAIRS = (
+	(1, 'ETHEUR'),
+	(2, 'ETHBTC'),
+	(3, 'ETHCLP'),
+	(4, 'BTCCLP'),
+	(5, 'LTCBTC'),
+	(6, 'BCHBTC')
+)
 
 class Exchange(models.Model):
     """
@@ -46,6 +53,7 @@ class Price(models.Model):
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     # api_request FK is also a legacy artifact to be deleted later on
     api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE)
+    pair = models.CharField(choices=PAIRS, default='ETHEUR', max_length=6)
 
     class Meta:
         abstract = True
@@ -62,4 +70,4 @@ class Bid(Price):
     price_type = models.CharField(choices=PRICE_TYPES, default='b', max_length=1)
 
     def __str__(self):
-        return "{}-{}-{}".format(self.exchange, self.timestamp, self.value)
+        return "{}-{}-{}-{}".format(self.exchange, self.pair, self.timestamp, self.value)
