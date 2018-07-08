@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+
+from .models import Ask, Bid, Exchange
+
+
+admin.site.register(Ask)
+admin.site.register(Bid)
+
+admin.site.register(Exchange)

@@ -1,11 +1,16 @@
 from django.db import models
 
+
 PRICE_TYPES = (
     ('a', 'ask'),
     ('b', 'bid')
     )
 
+
 class Exchange(models.Model):
+    """
+    the actual exchange model. an instance can be easily added through shell command or admin.
+    """
     name = models.CharField(max_length=200)
     website = models.URLField(max_length=1000)
     api_url = models.URLField(max_length=1000)
@@ -15,10 +20,26 @@ class Exchange(models.Model):
         return "{}".format(self.name)
 
 
+class ApiRequest(models.Model):
+    """
+    This data is recorded for legacy purposes. It has the old way of storing data, with each request
+    having a timestamp, and 10 data points for each Ask and Bid.
+    """
+    timestamp = models.DateTimeField('datetime requested')
+    # values would be stored in char format representing a python list, which would then need to be
+    # converted to an actual list
+    values = models.CharField(max_length=150)
+
+
+
 class Price(models.Model):
-    timestamp = models.DateTimeField('date published')
+    """
+    abstract model of a bid or ask.
+    """
+    timestamp = models.DateTimeField('datetime requested')
     value = models.DecimalField(max_digits=16, decimal_places=10)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
+    api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
