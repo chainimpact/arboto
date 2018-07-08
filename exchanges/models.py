@@ -1,5 +1,7 @@
 from django.db import models
 
+from pyarboto import config
+
 
 PRICE_TYPES = (
     ('a', 'ask'),
@@ -18,6 +20,9 @@ class Exchange(models.Model):
 
     def __str__(self):
         return "{}".format(self.name)
+
+    def get_new_exchages():
+        pass
 
 
 class ApiRequest(models.Model):
@@ -39,6 +44,7 @@ class Price(models.Model):
     timestamp = models.DateTimeField('datetime requested')
     value = models.DecimalField(max_digits=16, decimal_places=10)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
+    # api_request FK is also a legacy artifact to be deleted later on
     api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE)
 
     class Meta:
@@ -53,7 +59,7 @@ class Ask(Price):
 
 
 class Bid(Price):
-    price_type = models.CharField(choices=PRICE_TYPES, default='a', max_length=1)
+    price_type = models.CharField(choices=PRICE_TYPES, default='b', max_length=1)
 
     def __str__(self):
         return "{}-{}-{}".format(self.exchange, self.timestamp, self.value)
