@@ -49,15 +49,17 @@ class Price(models.Model):
     abstract model of a bid or ask.
     """
     timestamp = models.DateTimeField('datetime requested')
-    value = models.DecimalField(max_digits=16, decimal_places=10)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
+    pair = models.CharField(choices=PAIRS, default='ETHEUR', max_length=6)
+    value = models.DecimalField(max_digits=18, decimal_places=10)
+    volume = models.DecimalField(max_digits=12, decimal_places=4)
     # api_request FK is also a legacy artifact to be deleted later on
     api_request = models.ForeignKey(ApiRequest, on_delete=models.CASCADE, blank=True, null=True)
-    pair = models.CharField(choices=PAIRS, default='ETHEUR', max_length=6)
-    volume = models.DecimalField(max_digits=12, decimal_places=4)
+
 
     class Meta:
         abstract = True
+        unique_together = ("timestamp", "exchange", "pair", "value", "volume")
 
 
 class Ask(Price):
