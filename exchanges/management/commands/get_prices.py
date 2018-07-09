@@ -40,10 +40,10 @@ class Command(BaseCommand):
             help='do initial import with all lines of files.')
 
     def handle(self, *args, **options):
-        for data_file in os.listdir('/home/felipe/code/chainimpact/pyarboto/pyarboto/data'):
+        for data_file in os.listdir('pyarboto/data'):
             if data_file.endswith('placeholder'):
                 break
-            with open(os.path.join('/home/felipe/code/chainimpact/pyarboto/pyarboto/data', data_file)) as f:
+            with open(os.path.join('pyarboto/data', data_file)) as f:
                 try:
                     exchange = self.get_exchange(data_file)
                     price_type = self.get_price_type(data_file)
@@ -59,7 +59,7 @@ class Command(BaseCommand):
                     else:
                         last_line = data[-1]
                         self.import_data(last_line, exchange, price_type, pair)
-
+                # TODO:
                 # # check if already imported
                 # if len(data) > 1:
                 #     penultimate_line = data[-2]
@@ -72,8 +72,8 @@ class Command(BaseCommand):
 
     def get_exchange(self, data_file):
         try:
-            print("data_file")
-            print(data_file)
+            # print("data_file")
+            # print(data_file)
             exchanges = EXCHANGES
             for possible_exchange in exchanges:
                 if data_file.lower().startswith(possible_exchange.lower()):
@@ -82,6 +82,7 @@ class Command(BaseCommand):
         except UnboundLocalError:
             print('NOT FOUND EXCHANGE')
             print('PASSING...')
+            # TODO recover new exchange
             pass
 
     def get_price_type(self, data_file):
@@ -136,20 +137,6 @@ class Command(BaseCommand):
                 new_data_point.save()
             else:
                 new_data_point = Bid(
-                    timestamp = date,
-                    exchange = exchange,
-                    pair = pair,
-                    value = price,
-                    volume = volume
-                )
-                t1 = Ask.objects.filter(
-                    timestamp = date,
-                    exchange = exchange,
-                    pair = pair,
-                    value = price,
-                    volume = volume
-                )
-                t2 = Bid.objects.filter(
                     timestamp = date,
                     exchange = exchange,
                     pair = pair,
