@@ -1,10 +1,19 @@
 import os
+from pathlib import Path
+
+CONF_DIR = Path("/etc/felipe/")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = '7*k!!t6(e=w^m^@0d@25+m-slf#kx&+c!wyz2xu6@l$4t8jnw%'
 
 DEBUG = True
+
+if (CONF_DIR / "prod").is_file():
+    DEBUG = False
+
+# gunicorn step by step:
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
 
 ALLOWED_HOSTS = ['local', 'chainimpact.io', 'www.chainimpact.io', '52.18.138.232']
 
