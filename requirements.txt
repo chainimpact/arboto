@@ -1,6 +1,7 @@
 backcall
 decorator
 Django
+django_extensions
 ipython
 ipython-genutils
 jedi

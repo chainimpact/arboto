@@ -6,7 +6,7 @@ SECRET_KEY = '7*k!!t6(e=w^m^@0d@25+m-slf#kx&+c!wyz2xu6@l$4t8jnw%'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['local',]
+ALLOWED_HOSTS = ['local', 'chainimpact.io', 'www.chainimpact.io', '52.18.138.232']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
