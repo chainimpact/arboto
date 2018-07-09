@@ -2,6 +2,7 @@ import os
 import pytz
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
+from django.db.utils import IntegrityError
 
 from arboto.settings import DEBUG
 from exchanges.models import Ask, Bid, ApiRequest, Exchange
@@ -59,13 +60,13 @@ class Command(BaseCommand):
                         last_line = data[-1]
                         self.import_data(last_line, exchange, price_type, pair)
 
-                    # # check if already imported
-                    # if len(data) > 1:
-                    #     penultimate_line = data[-2]
-                    #
-                    #     # if self.check_date_previous_import(penultimate_line):
-                except:
-                    print('ERROR!')
+                # # check if already imported
+                # if len(data) > 1:
+                #     penultimate_line = data[-2]
+                #
+                #     # if self.check_date_previous_import(penultimate_line):
+                except IntegrityError:
+                    print('IntergrityError, passing import.')
                     print('PASSING...')
 
 
@@ -123,13 +124,6 @@ class Command(BaseCommand):
         data_points = last_line.split()
 
         for price, volume in zip(data_points[2::2], data_points[3::2]):
-            print(last_line)
-            # print(exchange)
-            # print(price_type)
-            # print(pair)
-            # print(date)
-            # print(price)
-            # print(volume)
             # for point in data_points[2::2]:
             if price_type == 'a':
                 new_data_point = Ask(
@@ -162,7 +156,4 @@ class Command(BaseCommand):
                     value = price,
                     volume = volume
                 )
-                print(t1)
-                print(t2)
-                print(new_data_point)
                 new_data_point.save()
