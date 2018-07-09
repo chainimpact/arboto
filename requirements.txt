@@ -4,6 +4,7 @@ Django
 django_extensions
 ipython
 ipython-genutils
+gunicorn
 jedi
 parso
 pexpect

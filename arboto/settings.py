@@ -85,5 +85,5 @@ USE_THOUSAND_SEPARATOR = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = join(BASE_DIR, 'static_dest') if DEBUG else \
-              '/var/www/%s/static_dest' % PROJECT
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_dest')#  if DEBUG else \
+              # '/var/www/%s/static_dest' % PROJECT
