@@ -1,5 +1,5 @@
 from django.db import models
-
+from django_extensions.db.models import TimeStampedModel
 
 
 PRICE_TYPES = (
@@ -16,7 +16,8 @@ PAIRS = (
 	('BCHBTC', 'BITCOINCASH-BITCOIN')
 )
 
-class Exchange(models.Model):
+
+class Exchange(TimeStampedModel):
     """
     the actual exchange model. an instance can be easily added through shell command or admin.
     """
@@ -28,14 +29,14 @@ class Exchange(models.Model):
     def __str__(self):
         return "{}".format(self.name)
 
-    def get_new_exchages():
+    def get_new_exchanges():
         pass
 
 
-class ApiRequest(models.Model):
+class ApiRequest(TimeStampedModel):
     """
-    This data is recorded for legacy purposes. It has the old way of storing data, with each request
-    having a timestamp, and 10 data points for each Ask and Bid.
+    This data is recorded for legacy purposes. It has the old way of storing data. Each request
+    has a timestamp, and 5 data points for each Ask and Bid.
     """
     timestamp = models.DateTimeField('datetime requested')
     # values would be stored in char format representing a python list, which would then need to be
@@ -44,7 +45,7 @@ class ApiRequest(models.Model):
 
 
 
-class Price(models.Model):
+class Price(TimeStampedModel):
     """
     abstract model of a bid or ask.
     """
