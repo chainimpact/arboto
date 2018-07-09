@@ -52,8 +52,26 @@ class Command(BaseCommand):
                     data = f.readlines()
                     # import all files and all lines of files
                     if options['initial']:
+                        # these 2 commands transform all data from space seaparated to csv to json
+                        # this is a nice shortcut for getting csv from ssv files
+                        # for file in *;
+                        # do
+                        # [ -e "$file" ] || continue
+                        # sed -r 's/^\s+//;s/\s+/,/g' ${file} > ${file}.csv
+                        # done
+                        #
+                        ## need to install csv2json through npm
+                        # for file in *.csv;
+                        # do
+                        # [ -e "$file" ] || continue
+                        # csv2json ${file} ${file}.json
+                        # done
+                        # 
+                        # mkdir fixtures
+
                         for line in data:
                             self.import_data(line, exchange, price_type, pair)
+
                     # only import last line from file, this action will be done every 5 minutes,
                     # just like the cronjob for the requests.
                     else:
@@ -68,7 +86,6 @@ class Command(BaseCommand):
                 except IntegrityError:
                     print('IntergrityError, passing import.')
                     print('PASSING...')
-
 
     def get_exchange(self, data_file):
         try:
