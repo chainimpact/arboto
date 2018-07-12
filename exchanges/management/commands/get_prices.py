@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.dateparse import parse_datetime
 from django.db.utils import IntegrityError
 
+import arboto
 from arboto.settings import DEBUG
 from exchanges.models import Ask, Bid, ApiRequest, Exchange
 
@@ -29,6 +30,12 @@ PAIRS = (
 	('BCHBTC', 'BITCOINCASH-BITCOIN')
 )
 
+
+# paths
+# OJO: we do dirname twice to go up twice to parent dir
+BASE_DIR = os.path.dirname(os.path.dirname(arboto.settings.__file__))
+DATA_DIR = os.path.join(BASE_DIR,'pyarboto/data/')
+
 class Command(BaseCommand):
     help = 'importing prices from pyarboto data files'
 
@@ -46,10 +53,10 @@ class Command(BaseCommand):
             help="set 'n' number of lines to read from the bottom of the files")
 
     def handle(self, *args, **options):
-        for data_file in os.listdir('pyarboto/data'):
+        for data_file in os.listdir(DATA_DIR):
             if data_file.endswith('placeholder'):
                 break
-            with open(os.path.join('pyarboto/data', data_file)) as f:
+            with open(os.path.join(DATA_DIR, data_file)) as f:
                 exchange = self.get_exchange(data_file)
                 price_type = self.get_price_type(data_file)
                 pair = self.get_pair(data_file)
