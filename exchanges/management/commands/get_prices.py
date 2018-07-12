@@ -63,7 +63,7 @@ class Command(BaseCommand):
 
                 # getting the number_of_lines var from the options and importing that
                 elif options.get('number_of_lines'):
-                    number_of_lines = options.get('number_of_lines')
+                    number_of_lines = int(options.get('number_of_lines'))
                     n_lines = data[-number_of_lines:]
                     for line in n_lines:
                         self.import_data(line, exchange, price_type, pair)
