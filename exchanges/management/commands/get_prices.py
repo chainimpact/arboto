@@ -39,6 +39,12 @@ class Command(BaseCommand):
             dest='initial',
             help='do initial import with all lines of files.')
 
+        parser.add_argument(
+            '-n', '--number-of-lines',
+            required=False,
+            dest='number_of_lines',
+            help="set 'n' number of lines to read from the bottom of the files")
+
     def handle(self, *args, **options):
         for data_file in os.listdir('pyarboto/data'):
             if data_file.endswith('placeholder'):
@@ -51,26 +57,15 @@ class Command(BaseCommand):
                 data = f.readlines()
                 # import all files and all lines of files
                 if options['initial']:
-                    # these 2 commands transform all data from space seaparated to csv to json
-                    # this is a nice shortcut for getting csv from ssv files
-                    # for file in *;
-                    # do
-                    # [ -e "$file" ] || continue
-                    # sed -r 's/^\s+//;s/\s+/,/g' ${file} > ${file}.csv
-                    # done
-                    #
-                    ## need to install csv2json through npm
-                    # for file in *.csv;
-                    # do
-                    # [ -e "$file" ] || continue
-                    # csv2json ${file} ${file}.json
-                    # done
-                    #
-                    # mkdir fixtures
-
+                    # looping through all lines in data, might take a while
                     for line in data:
                         self.import_data(line, exchange, price_type, pair)
 
+                # getting the number_of_lines var from the options and importing that
+                elif options.get('number_of_lines'):
+                    n_lines = data[-number_of_lines:]
+                    for line in n_lines:
+                        self.import_data(line, exchange, price_type, pair)
                 # only import last line from file, this action will be done every 5 minutes,
                 # just like the cronjob for the requests.
                 else:
@@ -78,15 +73,9 @@ class Command(BaseCommand):
                     self.import_data(last_line, exchange, price_type, pair)
                 # TODO:
                 # # check if already imported
-                # if len(data) > 1:
-                #     penultimate_line = data[-2]
-                #
-                #     # if self.check_date_previous_import(penultimate_line):
 
     def get_exchange(self, data_file):
         try:
-            # print("data_file")
-            # print(data_file)
             exchanges = EXCHANGES
             for possible_exchange in exchanges:
                 if data_file.lower().startswith(possible_exchange.lower()):
@@ -139,7 +128,6 @@ class Command(BaseCommand):
 
         for price, volume in zip(data_points[2::2], data_points[3::2]):
             try:
-                # for point in data_points[2::2]:
                 if price_type == 'a':
                     new_data_point = Ask(
                         timestamp = date,
