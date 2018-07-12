@@ -44,48 +44,44 @@ class Command(BaseCommand):
             if data_file.endswith('placeholder'):
                 break
             with open(os.path.join('pyarboto/data', data_file)) as f:
-                try:
-                    exchange = self.get_exchange(data_file)
-                    price_type = self.get_price_type(data_file)
-                    pair = self.get_pair(data_file)
+                exchange = self.get_exchange(data_file)
+                price_type = self.get_price_type(data_file)
+                pair = self.get_pair(data_file)
 
-                    data = f.readlines()
-                    # import all files and all lines of files
-                    if options['initial']:
-                        # these 2 commands transform all data from space seaparated to csv to json
-                        # this is a nice shortcut for getting csv from ssv files
-                        # for file in *;
-                        # do
-                        # [ -e "$file" ] || continue
-                        # sed -r 's/^\s+//;s/\s+/,/g' ${file} > ${file}.csv
-                        # done
-                        #
-                        ## need to install csv2json through npm
-                        # for file in *.csv;
-                        # do
-                        # [ -e "$file" ] || continue
-                        # csv2json ${file} ${file}.json
-                        # done
-                        # 
-                        # mkdir fixtures
+                data = f.readlines()
+                # import all files and all lines of files
+                if options['initial']:
+                    # these 2 commands transform all data from space seaparated to csv to json
+                    # this is a nice shortcut for getting csv from ssv files
+                    # for file in *;
+                    # do
+                    # [ -e "$file" ] || continue
+                    # sed -r 's/^\s+//;s/\s+/,/g' ${file} > ${file}.csv
+                    # done
+                    #
+                    ## need to install csv2json through npm
+                    # for file in *.csv;
+                    # do
+                    # [ -e "$file" ] || continue
+                    # csv2json ${file} ${file}.json
+                    # done
+                    #
+                    # mkdir fixtures
 
-                        for line in data:
-                            self.import_data(line, exchange, price_type, pair)
+                    for line in data:
+                        self.import_data(line, exchange, price_type, pair)
 
-                    # only import last line from file, this action will be done every 5 minutes,
-                    # just like the cronjob for the requests.
-                    else:
-                        last_line = data[-1]
-                        self.import_data(last_line, exchange, price_type, pair)
+                # only import last line from file, this action will be done every 5 minutes,
+                # just like the cronjob for the requests.
+                else:
+                    last_line = data[-1]
+                    self.import_data(last_line, exchange, price_type, pair)
                 # TODO:
                 # # check if already imported
                 # if len(data) > 1:
                 #     penultimate_line = data[-2]
                 #
                 #     # if self.check_date_previous_import(penultimate_line):
-                except IntegrityError:
-                    print('IntergrityError, passing import.')
-                    print('PASSING...')
 
     def get_exchange(self, data_file):
         try:
@@ -142,22 +138,27 @@ class Command(BaseCommand):
         data_points = last_line.split()
 
         for price, volume in zip(data_points[2::2], data_points[3::2]):
-            # for point in data_points[2::2]:
-            if price_type == 'a':
-                new_data_point = Ask(
-                    timestamp = date,
-                    exchange = exchange,
-                    pair = pair,
-                    value = price,
-                    volume = volume
-                )
-                new_data_point.save()
-            else:
-                new_data_point = Bid(
-                    timestamp = date,
-                    exchange = exchange,
-                    pair = pair,
-                    value = price,
-                    volume = volume
-                )
-                new_data_point.save()
+            try:
+                # for point in data_points[2::2]:
+                if price_type == 'a':
+                    new_data_point = Ask(
+                        timestamp = date,
+                        exchange = exchange,
+                        pair = pair,
+                        value = price,
+                        volume = volume
+                    )
+                    new_data_point.save()
+                else:
+                    new_data_point = Bid(
+                        timestamp = date,
+                        exchange = exchange,
+                        pair = pair,
+                        value = price,
+                        volume = volume
+                    )
+                    new_data_point.save()
+
+            except IntegrityError:
+                print('IntergrityError, passing import.')
+                print('PASSING...')
