@@ -15,7 +15,7 @@ if (CONF_DIR / "prod").is_file():
 # gunicorn step by step:
 # https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
 
-ALLOWED_HOSTS = ['local', 'chainimpact.io', 'www.chainimpact.io', '52.18.138.232']
+ALLOWED_HOSTS = ['local', 'localhost', 'chainimpact.io', 'www.chainimpact.io', '52.18.138.232']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

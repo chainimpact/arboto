@@ -61,6 +61,7 @@ class Price(TimeStampedModel):
     class Meta:
         abstract = True
         unique_together = ("timestamp", "exchange", "pair", "value", "volume")
+        ordering = ('timestamp',)
 
 
 class Ask(Price):
