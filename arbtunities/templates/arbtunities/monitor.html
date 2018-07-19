@@ -1,0 +1,67 @@
+{% extends 'arbtunities/base.html' %}
+    
+{% block head_block %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script> var base='{{request.build_absolute_uri}}';</script>
+{% endblock %}
+
+{% block content %}                            
+<div id="graph"></div>
+{% endblock %}  
+
+
+{% block js_block %}   
+<script>
+console.log(base);
+var kraken = {
+  x: [],
+  y: [],
+  type: 'scatter',
+  name: 'kraken'
+};
+
+var cryptomkt = {
+  x: [],
+  y: [],
+  type: 'scatter',
+  name: 'cryptomkt'
+};
+
+var layout = {
+  title:'Weighted Price Average'
+};
+
+var prices = [];
+
+url = '/arbtunities/api'; 
+$.getJSON(url)
+  .done(function( json ) {
+    arrayLength = json.kraken.length;
+    var x = [], y = [];
+    for (var i = 0; i < arrayLength; i++) {
+      x.push(json.kraken[i].timestamp);
+      y.push(json.kraken[i].price_avg);  
+    }
+    kraken.x = x;
+    kraken.y = y;
+    x = [], y = [];
+    for (i = 0; i < arrayLength; i++) {
+      x.push(json.cryptomkt[i].timestamp);
+      y.push(json.cryptomkt[i].price_avg);  
+    }
+    cryptomkt.x = x;
+    cryptomkt.y = y;
+
+    var data = [kraken, cryptomkt];
+    Plotly.newPlot('graph', data, layout);
+    
+    prices = json;    
+  })
+  .fail(function( jqxhr, textStatus, error ) {
+    var err = textStatus + ", " + error;
+    console.log( "Request Failed: " + err );
+  });  
+
+</script>        
+
+{% endblock %}  
