@@ -15,7 +15,8 @@ def monitor_data(request):
 	pair = request.GET.get('pair', 'ETHEUR')
 	exchange = request.GET.get('exch', 'kraken')
 	count = request.GET.get('count', 100) # to-do: replace by time fraime (1h, 4h, 1d, etc)	
-	return JsonResponse(get_weighted_price(exchange, pair, count), safe=False)
+	o = {'pair': pair, 'exchange': exchange, 'data': get_weighted_price(exchange, pair, int(count))};
+	return JsonResponse(o, safe=False)
 	
 def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):	
 	# get all distinct timestamps, starting from the newest
@@ -27,7 +28,7 @@ def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 		asks_t = Ask.objects.filter(exchange__name=exchange, pair=pair, timestamp=t[0])
 		bids_t = Bid.objects.filter(exchange__name=exchange, pair=pair, timestamp=t[0])
 
-		if asks_t and bids_t:
+		if asks_t and bids_t and asks_t[0].volume and bids_t[0].volume :
 			# do something
 			vol = 0
 			price_avg = 0
@@ -37,6 +38,5 @@ def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 			price_avg = price_avg/vol
 			p_vs_t.append({'timestamp': t[0], 'price_avg': price_avg})		
 	# array is reversed to be ordered in time
-	p_vs_t.reverse()
-	print(p_vs_t)
+	p_vs_t.reverse()	
 	return p_vs_t
