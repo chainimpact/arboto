@@ -16,12 +16,6 @@ def monitor_data(request):
 	exchange = request.GET.get('exch', 'kraken')
 	count = request.GET.get('count', 100) # to-do: replace by time fraime (1h, 4h, 1d, etc)	
 	return JsonResponse(get_weighted_price(exchange, pair, count), safe=False)
-
-# def get_data_by_pair(pair='ETHEUR', count=100):
-# 	# TO-DO: for all exchanges
-# 	kraken = get_weighted_price('kraken', 'ETHEUR', count)
-# 	cryptomkt = get_weighted_price('cryptomkt', 'ETHEUR', count)
-# 	return {'kraken': kraken, 'cryptomkt': cryptomkt}
 	
 def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):	
 	# get all distinct timestamps, starting from the newest
