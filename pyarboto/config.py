@@ -11,7 +11,7 @@ COLORS = {
 }
 
 # number of orders to fetch from the orderbook
-DEPTH = 5
+DEPTH = 20
 
 MARKETS = (
 	'ETHEUR',
