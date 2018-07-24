@@ -1,116 +1,55 @@
 {% extends 'arbtunities/base.html' %}
+{% load static %}
     
 {% block head_block %}
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script> var base='{{request.build_absolute_uri}}';</script>
 {% endblock %}
 
-{% block content %}                            
-  <div id="graph-etheur"></div>
-  <div id="graph-ethbtc"></div>
-  <div id="graph-ethclp"></div>
+{% block content %}   
+    <div class="row">
+      <div class="col-lg-8"><div id="graph-etheur"></div></div>
+      <div class="col-lg-2">              
+        <table id="eth-eur-tb-cm" class="table">
+         <tr><td align="center" colspan="2"><b>Cryptomkt thicker data</b></td></tr>
+        </table>      
+      </div>
+    </div>
+    <div class="row">
+      <div id="graph-ethbtc"></div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6"><div id="graph-ethclp"></div></div>
+      <div class="col-lg-3">
+        <table id="eth-clp-tb-cm" class="table">
+          <tr><td align="center" colspan="2"><b>Cryptomkt thicker data</b></td></tr>
+        </table>
+      </div>
+      <div class="col-lg-3">
+        <table id="eth-clp-tb-bu" class="table">
+          <tr><td align="center" colspan="2"><b>Buda thicker data</b></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div id="graph-btcclp"></div>
+      <div class="col-lg-2">              
+        <table id="btc-clp-tb" class="table">
+         <tr><td align="center" colspan="2"><b>Cryptomkt thicker data</b></td></tr>
+        </table>      
+      </div>
+    </div>
+    <div class="row">
+      <div id="graph-ltcbtc"></div>
+    </div>
+    <div class="row">
+      <div id="graph-bchbtc"></div>  
+    </div>
+
 {% endblock %}  
 
 
 {% block js_block %}   
-  <script>
-    var count = 200;
-    var exchs = ['bitstamp', 'kraken', 'cryptomkt'];    
-    var j = 0, url = '', data = [], layout = {};
-
-    // ETH-EUR
-    layout = {
-      title:'Mean of Price Distribution --- ETH-EUR'
-    };    
-    for(j = 0; j < exchs.length; j++){      
-      url = '/arbtunities/api/?count='+ count + '&pair=ETHEUR&' + 'exch=' + exchs[j];         
-      $.getJSON(url)
-        .done(function(json) {
-          var i = 0, x = [], y = [];          
-          var arrayLength = json.data.length;           
-          for (i = 0; i < arrayLength; i++) {
-            x.push(json.data[i].timestamp);
-            y.push(json.data[i].price_avg);  
-          }
-          trace_dict = {
-            x: x,
-            y: y,
-            name: json.exchange,
-            type: 'scatter'
-          };                    
-          data.push(trace_dict);                
-          Plotly.newPlot('graph-etheur', data, layout);  
-        })
-        .fail(function( jqxhr, textStatus, error ) {
-          var err = textStatus + ", " + error;
-          console.log( "Request Failed: " + err );
-        });          
-    }
-
-    // ETH-BTC
-    exchs = ['bitstamp', 'kraken', 'buda'];    
-    j = 0;
-    var data2 = [];
-    var layout2 = {
-      title:'Mean of Price Distribution --- ETH-BTC'
-    };    
-    for(j = 0; j < exchs.length; j++){      
-      url = '/arbtunities/api/?pair=ETHBTC&' + 'exch=' + exchs[j];         
-      $.getJSON(url)
-        .done(function(json) {
-          var i = 0, x = [], y = [];          
-          var arrayLength = json.data.length;           
-          for (i = 0; i < arrayLength; i++) {
-            x.push(json.data[i].timestamp);
-            y.push(json.data[i].price_avg);  
-          }
-          trace_dict = {
-            x: x,
-            y: y,
-            name: json.exchange,
-            type: 'scatter'
-          };                    
-          data2.push(trace_dict);                
-          Plotly.newPlot('graph-ethbtc', data2, layout2);  
-        })
-        .fail(function( jqxhr, textStatus, error ) {
-          var err = textStatus + ", " + error;
-          console.log( "Request Failed: " + err );
-        });          
-    }        
-
-    // ETH-CLP
-    exchs = ['cryptomkt', 'buda'];    
-    j = 0;
-    var data3 = [];
-    var layout3 = {
-      title:'Mean of Price Distribution --- ETH-CLP'
-    };    
-    for(j = 0; j < exchs.length; j++){      
-      url = '/arbtunities/api/?pair=ETHCLP&' + 'exch=' + exchs[j];         
-      $.getJSON(url)
-        .done(function(json) {
-          var i = 0, x = [], y = [];          
-          var arrayLength = json.data.length;           
-          for (i = 0; i < arrayLength; i++) {
-            x.push(json.data[i].timestamp);
-            y.push(json.data[i].price_avg);  
-          }
-          trace_dict = {
-            x: x,
-            y: y,
-            name: json.exchange,
-            type: 'scatter'
-          };                    
-          data3.push(trace_dict);                
-          Plotly.newPlot('graph-ethclp', data3, layout3);  
-        })
-        .fail(function( jqxhr, textStatus, error ) {
-          var err = textStatus + ", " + error;
-          console.log( "Request Failed: " + err );
-        });          
-    }
-
-  </script>        
-
+<script src="{% static 'arbtunities/js/main.js' %}" type="text/javascript"></script>
+<!-- <script src="{{ request.scheme }}://{{ request.get_host }}{% static 'arbtunities/js/main.js' %}" type="text/javascript"></script> -->
 {% endblock %}  

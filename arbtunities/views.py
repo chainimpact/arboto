@@ -18,7 +18,7 @@ def monitor_data(request):
 	o = {'pair': pair, 'exchange': exchange, 'data': get_weighted_price(exchange, pair, int(count))};
 	return JsonResponse(o, safe=False)
 	
-def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):	
+def get_weighted_price(exchange='kraken', pair='ETHEUR', count=10000):	
 	# get all distinct timestamps, starting from the newest
 	timestamps = Ask.objects.filter(exchange__name=exchange, pair=pair).order_by('-timestamp').values_list('timestamp').distinct()[:count]
 	p_vs_t = []
