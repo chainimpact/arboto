@@ -14,13 +14,14 @@ def monitor(request):
 def monitor_data(request):
 	pair = request.GET.get('pair', 'ETHEUR')
 	exchange = request.GET.get('exch', 'kraken')
-	count = request.GET.get('count', 100) # to-do: replace by time fraime (1h, 4h, 1d, etc)	
+	count = request.GET.get('count', 1000) # to-do: replace by time fraime (1h, 4h, 1d, etc)	
 	o = {'pair': pair, 'exchange': exchange, 'data': get_weighted_price(exchange, pair, int(count))};
 	return JsonResponse(o, safe=False)
 	
-def get_weighted_price(exchange='kraken', pair='ETHEUR', count=10000):	
+def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
+	step = 50;
 	# get all distinct timestamps, starting from the newest
-	timestamps = Ask.objects.filter(exchange__name=exchange, pair=pair).order_by('-timestamp').values_list('timestamp').distinct()[:count]
+	timestamps = Ask.objects.filter(exchange__name=exchange, pair=pair, volume__gt=0).order_by('-timestamp').values_list('timestamp').distinct()[:count:step]
 	p_vs_t = []
 
 	for t in timestamps:
