@@ -4,16 +4,16 @@ from exchanges.models import Ask, Bid
 from datetime import datetime
 from django.core import serializers
 from django.conf import settings
-import sys, os
-sys.path.append(os.path.join(settings.BASE_DIR,'pyarboto/'))
-import cryptomkt, buda, bitstamp, kraken, config
+# import sys, os
+# sys.path.append(os.path.join(settings.BASE_DIR,'pyarboto/'))
+from pyarboto import config
 
 # just some testing
 def index(request):			
 	return HttpResponse('hey')
 
 def monitor(request):		
-	return render(request, 'arbtunities/monitor.html')
+	return render(request, 'arbtunities/monitor.html')	
 
 def monitor_data(request):
 	pair = request.GET.get('pair', 'ETHEUR')
@@ -21,6 +21,9 @@ def monitor_data(request):
 	count = request.GET.get('count', 1000) # to-do: replace by time fraime (1h, 4h, 1d, etc)	
 	o = {'pair': pair, 'exchange': exchange, 'data': get_weighted_price(exchange, pair, int(count))};
 	return JsonResponse(o, safe=False)
+
+def rois(request):		
+	return render(request, 'arbtunities/rois.html')
 	
 def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 	step = 50;
@@ -89,7 +92,7 @@ def get_hi_bids_and_lo_asks(request):
 		o.append({'market': mkt,'hi_bid': hi_bid, 'hi_bid_vol': hi_bid_vol, 'hi_bid_exch': hi_bid_exch, 
 			'lo_ask': lo_ask, 'lo_ask_vol': lo_ask_vol, 'lo_ask_exch': lo_ask_exch, 'roi': roi})
 	
-
-	return HttpResponse(o)
+	return JsonResponse(o, safe=False)
+	# return HttpResponse(o)
 
 

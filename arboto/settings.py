@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'exchanges.apps.ExchangesConfig',
     'arbtunities',
-    'django_extensions',
+    'pyarboto',
+    'django_extensions',    
 ]
 
 MIDDLEWARE = [

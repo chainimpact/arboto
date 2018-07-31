@@ -1,0 +1,35 @@
+{% extends 'arbtunities/base.html' %}
+{% load static %}
+    
+{% block content %}   
+    <div class="row">
+      <div class="col-lg-4"></div>
+      <div class="col-lg-4">              
+        <table id="results-tb" class="table">
+        </table>      
+      </div>
+    </div>
+    
+{% endblock %}  
+
+
+{% block js_block %}   
+<script type="text/javascript">
+
+var url = '/arboto/arbtunities/api/rois';
+$.getJSON(url)
+    .done(function(json) {
+      $.each( json, function( index, val ) {
+        console.log(val);
+        $('#results-tb').append('<tr><td align="center" colspan="2"><b>Pair: ' + val.market + '</b></td></tr>');
+        // $('#results-tb').append('<tr><th align="center">Lowest Ask</th><th></th>' + val.market + '</b></td></tr>');
+
+        
+        // var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
+        // $('#eth-eur-tb-cm').append(newItem);
+      });
+    });
+
+
+</script>
+{% endblock %}  
