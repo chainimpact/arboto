@@ -3,6 +3,10 @@ from django.http import HttpResponse, JsonResponse
 from exchanges.models import Ask, Bid
 from datetime import datetime
 from django.core import serializers
+from django.conf import settings
+import sys, os
+sys.path.append(os.path.join(settings.BASE_DIR,'pyarboto/'))
+import cryptomkt, buda, bitstamp, kraken, config
 
 # just some testing
 def index(request):			
@@ -41,3 +45,51 @@ def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 	# array is reversed to be ordered in time
 	p_vs_t.reverse()	
 	return p_vs_t
+
+def get_hi_bids_and_lo_asks(request):
+	o = []		
+	fee = 0.5/100 # assuming a relatively high fee of .5%
+
+	for mkt in config.MARKETS:
+		hi_bid = 0
+		hi_bid_vol = -1
+		hi_bid_exch = ""
+		lo_ask = 1e10
+		lo_ask_vol = -1
+		lo_ask_exch = ""
+		for key in config.EXCHANGES:			
+			client = config.EXCHANGES[key]				
+			if mkt in client.get_markets():
+				order_type = 'bids'
+				data = client.get_n_last_orders(order_type, mkt, 1)
+				if data:
+					data = data[0]
+					price = float(data['price'])
+					vol = float(data['amount'])
+					if price > hi_bid:
+						hi_bid = price
+						hi_bid_vol = vol
+						hi_bid_exch = key;
+				order_type = 'asks'
+				data = client.get_n_last_orders(order_type, mkt, 1)
+				if data:
+					data = data[0]
+					price = float(data['price'])
+					vol = float(data['amount'])
+					if price < lo_ask:
+						lo_ask = price
+						lo_ask_vol = vol
+						lo_ask_exch = key;
+
+		if hi_bid > lo_ask:
+			roi = (hi_bid*(1-fee)/(lo_ask*(1+fee)) - 1)*100
+		else:
+			roi = 0
+
+		o.append({'market': mkt,'hi_bid': hi_bid, 'hi_bid_vol': hi_bid_vol, 'hi_bid_exch': hi_bid_exch, 
+			'lo_ask': lo_ask, 'lo_ask_vol': lo_ask_vol, 'lo_ask_exch': lo_ask_exch, 'roi': roi})
+	
+
+	return HttpResponse(o)
+
+
