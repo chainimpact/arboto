@@ -118,3 +118,9 @@ venv.bak/
 data/
 tmp/
 config/
+
+# Node stuff
+node_modules/
+package-lock.json
+gulpfile.js
+
