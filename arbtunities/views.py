@@ -22,8 +22,14 @@ def monitor_data(request):
 	o = {'pair': pair, 'exchange': exchange, 'data': get_weighted_price(exchange, pair, int(count))};
 	return JsonResponse(o, safe=False)
 
-def rois(request):		
-	return render(request, 'arbtunities/rois.html')
+def rois(request):
+	market_rois = get_hi_bids_and_lo_asks()
+	context = {'market_rois': market_rois}
+	return render(request, 'arbtunities/rois.html', context)
+
+def rois_data(request):
+	return JsonResponse(get_hi_bids_and_lo_asks(), safe=False)
+
 	
 def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 	step = 50;
@@ -49,7 +55,7 @@ def get_weighted_price(exchange='kraken', pair='ETHEUR', count=100):
 	p_vs_t.reverse()	
 	return p_vs_t
 
-def get_hi_bids_and_lo_asks(request):
+def get_hi_bids_and_lo_asks():
 	o = []		
 	fee = 0.5/100 # assuming a relatively high fee of .5%
 
@@ -92,7 +98,6 @@ def get_hi_bids_and_lo_asks(request):
 		o.append({'market': mkt,'hi_bid': hi_bid, 'hi_bid_vol': hi_bid_vol, 'hi_bid_exch': hi_bid_exch, 
 			'lo_ask': lo_ask, 'lo_ask_vol': lo_ask_vol, 'lo_ask_exch': lo_ask_exch, 'roi': roi})
 	
-	return JsonResponse(o, safe=False)
-	# return HttpResponse(o)
+	return o	
 
 

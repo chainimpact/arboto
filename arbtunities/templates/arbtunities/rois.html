@@ -1,14 +1,29 @@
 {% extends 'arbtunities/base.html' %}
 {% load static %}
     
-{% block content %}   
+{% block content %} 
+  {% for market in market_rois %} 
     <div class="row">
-      <div class="col-lg-4"></div>
-      <div class="col-lg-4">              
-        <table id="results-tb" class="table">
+      <div class="col-lg-3"></div>
+      <div class="col-lg-6">              
+        <table id="results-tb" class="table table-striped">
+          <thead class="thead-dark"><tr><th align="center" colspan="3" scope="row">{{market.market}}</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Bid</td>
+              <td>Volume</td>
+              <td>Exchange</td>
+            </tr>
+            <tr>
+              <td>{{market.hi_bid}}</td>
+              <td>{{market.hi_bid_vol}}</td>
+              <td>{{market.hi_bid_exch}}</td>
+            </tr>
+          </tbody>
         </table>      
       </div>
     </div>
+  {% endfor %}
     
 {% endblock %}  
 
@@ -16,19 +31,15 @@
 {% block js_block %}   
 <script type="text/javascript">
 
-var url = '/arboto/arbtunities/api/rois';
-$.getJSON(url)
-    .done(function(json) {
-      $.each( json, function( index, val ) {
-        console.log(val);
-        $('#results-tb').append('<tr><td align="center" colspan="2"><b>Pair: ' + val.market + '</b></td></tr>');
-        // $('#results-tb').append('<tr><th align="center">Lowest Ask</th><th></th>' + val.market + '</b></td></tr>');
-
-        
-        // var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        // $('#eth-eur-tb-cm').append(newItem);
-      });
-    });
+// var url = '/arboto/arbtunities/api/rois';
+// $.getJSON(url)
+//     .done(function(json) {
+//       $.each( json, function( index, val ) {
+//         console.log(val);
+//         $('#results-tb').append('<tr><td align="center" colspan="2"><b>Pair: ' + val.market + '</b></td></tr>');
+//         $('#results-tb').append('<tr><td></td><td>' + val.market + '</td></tr>');
+//       });
+//     });
 
 
 </script>

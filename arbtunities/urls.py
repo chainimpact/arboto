@@ -7,5 +7,5 @@ urlpatterns = [
     path('monitor/', views.monitor, name='monitor'),
     path('monitor/rois', views.rois, name='rois'),
     path('api/', views.monitor_data, name='monitor_data'),
-    path('api/rois', views.get_hi_bids_and_lo_asks, name='get_hi_bids_and_lo_asks'), 
+    path('api/rois', views.rois_data, name='rois_data'), 
 ]
