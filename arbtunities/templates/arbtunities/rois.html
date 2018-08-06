@@ -19,6 +19,19 @@
               <td>{{market.hi_bid_vol}}</td>
               <td>{{market.hi_bid_exch}}</td>
             </tr>
+            <tr>
+              <td>Ask</td>
+              <td>Volume</td>
+              <td>Exchange</td>
+            </tr>
+            <tr>
+              <td>{{market.lo_ask}}</td>
+              <td>{{market.lo_ask_vol}}</td>
+              <td>{{market.lo_ask_exch}}</td>
+            </tr>
+            <tr>
+              <td colspan="3" class="roi-row" data-roi="{{market.roi}}">ROI: {{market.roi}}</td>
+            </tr> 
           </tbody>
         </table>      
       </div>
@@ -30,6 +43,16 @@
 
 {% block js_block %}   
 <script type="text/javascript">
+
+$.each($('.roi-row'), function() {
+  // var roi = parseFloat($(this).text());
+  var roi = parseFloat($(this).attr("data-roi"));
+  console.log(roi);
+  if(roi > 0)
+    $(this).addClass("table-success");
+  else
+    $(this).addClass("table-danger");
+});
 
 // var url = '/arboto/arbtunities/api/rois';
 // $.getJSON(url)
