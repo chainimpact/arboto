@@ -120,4 +120,8 @@ tmp/
 temp/
 config/
 
+# Node stuff
+node_modules/
+package-lock.json
+gulpfile.js
 

@@ -1,5 +1,5 @@
 import os
-import kraken, bitstamp, buda, cryptomkt
+from . import kraken, bitstamp, buda, cryptomkt
 
 DEBUG_MODE_ON = True
 

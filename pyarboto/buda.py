@@ -22,7 +22,7 @@
 """
 import requests
 import re
-from exchange_client_interface import *
+from .exchange_client_interface import *
 
 class Buda(ExchangeClientInterface):
 	

@@ -35,13 +35,9 @@ for(j = 0; j < exchs.length; j++){
 
 ticker_url = 'https://api.cryptomkt.com/v1/ticker?market=ETHEUR'
 $.getJSON(ticker_url)
-    .done(function(json) {
-      $.each( json.data[0], function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#eth-eur-tb-cm').append(newItem);
-      });
+    .done(function(json) {      
+      $('#eth-eur-tb-cm').append(createBody(json.data[0]));                  
     });
-
 
 // ETH-BTC
 exchs = ['bitstamp', 'kraken', 'buda'];
@@ -78,11 +74,8 @@ for(j = 0; j < exchs.length; j++){
 ticker_url = 'https://www.buda.com/api/v2/markets/eth-btc/ticker';
 $.getJSON(proxyurl + ticker_url)
     .done(function(json) {
-      $.each( json.ticker, function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#eth-btc-tb-bu').append(newItem);
-      });      
-    });
+      $('#eth-btc-tb-bu').append(createBody(json.ticker));                  
+    });          
 
 // ETH-CLP
 exchs = ['cryptomkt', 'buda'];
@@ -119,21 +112,15 @@ for(j = 0; j < exchs.length; j++){
 ticker_url = 'https://api.cryptomkt.com/v1/ticker?market=ETHCLP'
 $.getJSON(ticker_url)
     .done(function(json) {
-      $.each( json.data[0], function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#eth-clp-tb-cm').append(newItem);
-      });
+      $('#eth-clp-tb-cm').append(createBody(json.data[0]));            
     });
 
 ticker_url = 'https://www.buda.com/api/v2/markets/eth-clp/ticker';
 $.getJSON(proxyurl + ticker_url)
     .done(function(json) {
-      $.each( json.ticker, function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#eth-clp-tb-bu').append(newItem);
-      });      
+      $('#eth-clp-tb-bu').append(createBody(json.ticker));      
     });
-// trying to solve cross-domain issue through jsonp, but didn't work.
+// tried to solve cross-domain issue through jsonp, but didn't work.
 // Buda server probably do not implement jsonp. Using 3d-party proxy for now
 // $.ajax({
 //   dataType: "jsonp",
@@ -180,10 +167,7 @@ for(j = 0; j < exchs.length; j++){
 ticker_url = 'https://www.buda.com/api/v2/markets/ltc-btc/ticker';
 $.getJSON(proxyurl + ticker_url)
     .done(function(json) {
-      $.each( json.ticker, function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#ltc-btc-tb-bu').append(newItem);
-      });      
+        $('#ltc-btc-tb-bu').append(createBody(json.ticker));      
     });
 
 
@@ -221,11 +205,8 @@ for(j = 0; j < exchs.length; j++){
 // fetch ticker data for BCH-BTC from Buda
 ticker_url = 'https://www.buda.com/api/v2/markets/bch-btc/ticker';
 $.getJSON(proxyurl + ticker_url)
-    .done(function(json) {
-      $.each( json.ticker, function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#bch-btc-tb-bu').append(newItem);
-      });      
+    .done(function(json) {      
+      $('#bch-btc-tb-bu').append(createBody(json.ticker));            
     });
 
 // BTC-CLP
@@ -262,19 +243,22 @@ for(j = 0; j < exchs.length; j++){
 
 ticker_url = 'https://api.cryptomkt.com/v1/ticker?market=BTCCLP'
 $.getJSON(ticker_url)
-    .done(function(json) {
-      ticker_data = json;
-      $.each( json.data[0], function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#btc-clp-tb-cm').append(newItem);
-      });
+    .done(function(json) {      
+      $('#btc-clp-tb-cm').append(createBody(json.data[0]));            
     });
 // fetch ticker data for BTC-CLP from Buda
 ticker_url = 'https://www.buda.com/api/v2/markets/btc-clp/ticker';
 $.getJSON(proxyurl + ticker_url)
-    .done(function(json) {
-      $.each( json.ticker, function( key, val ) {
-        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
-        $('#btc-clp-tb-bu').append(newItem);
-      });      
+    .done(function(json) {                  
+      $('#btc-clp-tb-bu').append(createBody(json.ticker));
     });
+
+
+function createBody(json){
+  var body = $('<tbody></tbody>');
+  $.each( json, function( key, val ) {
+        var newItem = $('<tr></tr>').append('<td>'+ key + '</td><td>'+ val + '</td>');
+        body.append(newItem);
+      });  
+  return body;
+}

@@ -70,7 +70,7 @@
 		'ETHGBP'
 """
 import requests, re
-from exchange_client_interface import *
+from .exchange_client_interface import *
 
 class Kraken(ExchangeClientInterface):
 

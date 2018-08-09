@@ -1,0 +1,46 @@
+{% extends 'arbtunities/base.html' %}
+{% load static %}
+    
+{% block head_block %}
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>  
+{% endblock %}
+
+{% block content %}   
+    <div class="row">
+      <div class="col-lg-8"><div id="graph-etheur"></div></div>
+      <div class="col-lg-2">                      
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-8"><div id="graph-ethbtc"></div></div>
+      <div class="col-lg-4"></div>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-8"><div id="graph-ethclp"></div></div>      
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-6"><div id="graph-btcclp"></div></div>
+      <div class="col-lg-3">                      
+      </div>
+      <div class="col-lg-3">        
+      </div>
+    </div>
+    <div class="row">      
+      <div class="col-lg-8"><div id="graph-ltcbtc"></div></div>
+      <div class="col-lg-4">        
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8"><div id="graph-bchbtc"></div></div>    
+    </div>
+
+{% endblock %}  
+
+
+{% block js_block %}   
+<script src="{% static 'arbtunities/js/monitor2.js' %}" type="text/javascript"></script>
+<!-- <script src="{{ request.scheme }}://{{ request.get_host }}{% static 'arbtunities/js/main.js' %}" type="text/javascript"></script> -->
+{% endblock %}  

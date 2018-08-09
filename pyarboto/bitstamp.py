@@ -17,7 +17,7 @@
 		ETH/EUR
 """
 import requests
-from exchange_client_interface import *
+from .exchange_client_interface import *
 
 class Bitstamp(ExchangeClientInterface):
 
