@@ -4,7 +4,7 @@
 {% block content %} 
   {% for market in market_rois %} 
     <div class="row">
-      <div class="col-lg-3">Hola</div>
+      <div class="col-lg-3"></div>
       <div class="col-lg-6">              
         <table id="results-tb" class="table table-striped">
           <thead class="thead-dark"><tr><th align="center" colspan="3" scope="row">{{market.market}}</th></tr></thead>
@@ -53,17 +53,6 @@ $.each($('.roi-row'), function() {
   else
     $(this).addClass("table-danger");
 });
-
-// var url = '/arboto/arbtunities/api/rois';
-// $.getJSON(url)
-//     .done(function(json) {
-//       $.each( json, function( index, val ) {
-//         console.log(val);
-//         $('#results-tb').append('<tr><td align="center" colspan="2"><b>Pair: ' + val.market + '</b></td></tr>');
-//         $('#results-tb').append('<tr><td></td><td>' + val.market + '</td></tr>');
-//       });
-//     });
-
 
 </script>
 {% endblock %}  
