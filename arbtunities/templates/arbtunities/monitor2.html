@@ -43,4 +43,9 @@
 {% block js_block %}   
 <script src="{% static 'arbtunities/js/monitor2.js' %}" type="text/javascript"></script>
 <!-- <script src="{{ request.scheme }}://{{ request.get_host }}{% static 'arbtunities/js/main.js' %}" type="text/javascript"></script> -->
+
+<script type="text/javascript">
+$('.active').removeClass('active');
+$('#history-href').addClass('active');
+</script>
 {% endblock %}  

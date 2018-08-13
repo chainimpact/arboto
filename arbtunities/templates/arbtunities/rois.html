@@ -44,6 +44,9 @@
 {% block js_block %}   
 <script type="text/javascript">
 
+$('.active').removeClass('active');
+$('#arbtunities-href').addClass('active');
+
 $.each($('.roi-row'), function() {
   // var roi = parseFloat($(this).text());
   var roi = parseFloat($(this).attr("data-roi"));
