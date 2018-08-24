@@ -70,7 +70,12 @@
 		'ETHGBP'
 """
 import requests, re
-from .exchange_client_interface import *
+if __package__ is None or __package__ == '':
+	#uses current directory visibility
+	from exchange_client_interface import *
+else:
+	#uses current package visibility
+	from .exchange_client_interface import *
 
 class Kraken(ExchangeClientInterface):
 

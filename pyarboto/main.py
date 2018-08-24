@@ -1,7 +1,14 @@
 from datetime import datetime
-import threading
-from . import cryptomkt, buda, bitstamp, kraken
-from .config import *
+if __package__ is None or __package__ == '':
+	#uses current directory visibility
+	import kraken, bitstamp, buda, cryptomkt
+	from config import *
+else:
+	#uses current package visibility
+	from . import kraken, bitstamp, buda, cryptomkt
+	from .config import *
+
+
 
 def record_orders(timestamp, data, file_name):	
 	line = timestamp	
@@ -18,7 +25,7 @@ def dummy_data():
 
 def say(msg, level=0):
 	if DEBUG_MODE_ON:
-		print(COLORS[level] + msg + COLORS[2])
+		print(COLORS[level] + msg + COLORS[0])
 
 if __name__ == '__main__':	
 	

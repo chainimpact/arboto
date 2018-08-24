@@ -1,5 +1,12 @@
 import os
-from . import kraken, bitstamp, buda, cryptomkt
+if __package__ is None or __package__ == '':
+	#uses current directory visibility
+	import kraken, bitstamp, buda, cryptomkt
+else:
+	#uses current package visibility
+	from . import kraken, bitstamp, buda, cryptomkt
+
+
 
 DEBUG_MODE_ON = True
 
@@ -7,7 +14,8 @@ DEBUG_MODE_ON = True
 COLORS = {
  	0: '\033[0m',  # end color
  	1: '\033[93m', # warning
- 	2: '\033[91m'  # fail
+ 	2: '\033[91m', # fail
+ 	3: '\033[42m'  # green background
 }
 
 # number of orders to fetch from the orderbook
